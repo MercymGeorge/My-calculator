@@ -1,29 +1,33 @@
+function appendToDisplay(value) {
+    const display = document.querySelector("#display");
+    display.value += value;
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const display = document.querySelector('#display');
-        const buttons = document.querySelectorAll('.buttons button');
+function clearDisplay() {
+    const display = document.querySelector("#display");
+    display.value = "";
+}
 
-        function appendToDisplay(value) {
-            display.value += value;
-        }
+function calculate() {
+    const display = document.querySelector("#display");
+    const expression = display.value;
+    
+   
+    const invalidCharacters = expression.match(/[^\d\s+\-×÷]/g);
+    if (invalidCharacters !== null) {
+        display.value = "Error";
+        return;
+    }
+    
+    
+    const formattedExpression = expression.replace(/×/g, "*").replace(/÷/g, "/");
+    
+    const result = evaluateExpression(formattedExpression);
+    display.value = result !== null ? result : "Error";
+}
 
-        function clearDisplay() {
-            display.value = '';
-        }
-
-        function calculate() {
-            const expression = display.value;
-            const result = eval(expression);
-            display.value = result || 'Error';
-        }
-
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                const buttonText = button.textContent;
-                if (buttonText === '=') calculate();
-                else if (buttonText === 'C') clearDisplay();
-                else appendToDisplay(buttonText);
-            });
-        });
-    });
+function evaluateExpression(expr) {
+    const safeEval = new Function('return ' + expr);
+    return safeEval();
+}
 
